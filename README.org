@@ -1,0 +1,14 @@
+# dks-sddm-theme
+
+"This SDDM theme is a slightly modified version of 'Chili login theme for SDDM' created by Marian Arlt.
+[[https://github.com/MarianArlt/sddm-chili]]
+
+After installing, change the theme name to "chili-dks" in /etc/sddm.conf as shown below.
+
+#+begin_example
+[Theme]
+# Current theme name
+Current=chili-dks
+#+end_example
+
+[[./Screenshot.png]]

@@ -1,0 +1,17 @@
+[SddmGreeterTheme]
+Name=Chili-dks
+Description=A slightly modified chili theme for SDDM
+Author=Marian Alexander Arlt, dks
+Copyright=(c) 2018, Marian Alexander Arlt
+Email=marianarlt@icloud.com
+License=GPLv3
+Type=sddm-theme
+Version=0.1.5
+Website=https://github.com/MarianArlt/sddm-theme-chili
+Screenshot=preview.jpg
+MainScript=Main.qml
+ConfigFile=theme.conf
+TranslationsDirectory=translations
+Theme-Id=chili-dks
+Theme-API=2.0
+QtVersion=5
