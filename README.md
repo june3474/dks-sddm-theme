@@ -1,0 +1,1 @@
+# dks-sddm-theme
