@@ -14,4 +14,4 @@ ConfigFile=theme.conf
 TranslationsDirectory=translations
 Theme-Id=chili-dks
 Theme-API=2.0
-QtVersion=5
+QtVersion=6

@@ -17,9 +17,9 @@
  *   51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-import QtQuick 2.2
-import QtQuick.Controls 1.4
-import QtQuick.Controls.Styles 1.4
+import QtQuick
+import QtQuick.Controls
+import QtQml
 
 Button {
     id: keyboardLayoutButton
@@ -28,28 +28,29 @@ Button {
 
     visible: keyboard.layouts.length > 1
 
-    style: ButtonStyle {
-        label: Image {
-            id: buttonLabel
-            source: "../assets/keyboard.svgz"
-            fillMode: Image.PreserveAspectFit
-            transform: Translate { x: 5 }
-            smooth: false
-        }
-        background: Rectangle {
-            radius: 3
-            color: keyboardLayoutButton.activeFocus ? "white" : "transparent"
-            opacity: keyboardLayoutButton.activeFocus ? 0.3 : 1
-        }
+    contentItem: Image {
+        id: buttonLabel
+        source: "../assets/keyboard.svgz"
+        fillMode: Image.PreserveAspectFit
+        transform: Translate { x: 5 }
+        smooth: false
+    }
+    background: Rectangle {
+        radius: 3
+        color: keyboardLayoutButton.activeFocus ? "white" : "transparent"
+        opacity: keyboardLayoutButton.activeFocus ? 0.3 : 1
     }
 
-    menu: Menu {
+    onClicked: keyboardLayoutMenu.open()
+
+    Menu {
         id: keyboardLayoutMenu
+        y: keyboardLayoutButton.height
         Instantiator {
             id: instantiator
             model: keyboard.layouts
-            onObjectAdded: keyboardLayoutMenu.insertItem(index, object)
-            onObjectRemoved: keyboardLayoutMenu.removeItem( object )
+            onObjectAdded: (index, object) => keyboardLayoutMenu.insertItem(index, object)
+            onObjectRemoved: (index, object) => keyboardLayoutMenu.removeItem(object)
             delegate: MenuItem {
                 text: modelData.longName
                 property string shortName: modelData.shortName

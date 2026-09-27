@@ -8,10 +8,9 @@ Chili for SDDM is the desktop environment *independent* adaption of my chili log
 
 ### Dependencies
 
-  * sddm
-  * qt5
-  * qt5-quickcontrols
-  * qt5-graphicaleffects
+  * sddm (Qt 6 build)
+  * qt6-declarative (Qt Quick Controls)
+  * qt6-5compat (Qt5Compat.GraphicalEffects)
 
 ### Installing the theme
 

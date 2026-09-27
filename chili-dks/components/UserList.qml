@@ -18,7 +18,7 @@
  *   51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-import QtQuick 2.2
+import QtQuick
 
 ListView {
     id: view
@@ -38,7 +38,24 @@ ListView {
     signal userSelected;
 
     orientation: ListView.Horizontal
-    highlightRangeMode: ListView.StrictlyEnforceRange
+
+    // With StrictlyEnforceRange, moving the highlight range on resize makes Qt 6 re-derive currentIndex from the
+    // scroll position (the first user gets selected). Suspend the range while resizing and restore the index after.
+    property bool rangeEnforced: false
+    highlightRangeMode: rangeEnforced ? ListView.StrictlyEnforceRange : ListView.NoHighlightRange
+
+    function enforceRange() {
+        var index = currentIndex
+        rangeEnforced = true
+        currentIndex = index
+    }
+
+    onWidthChanged: {
+        rangeEnforced = false
+        Qt.callLater(enforceRange)
+    }
+
+    Component.onCompleted: Qt.callLater(enforceRange)
 
     preferredHighlightBegin: width / 2 - userItemWidth / 2
     preferredHighlightEnd: preferredHighlightBegin
