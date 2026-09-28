@@ -23,6 +23,7 @@ import QtQuick
 import QtQuick.Controls
 import Qt5Compat.GraphicalEffects
 
+// One user in the user row: round avatar with the name under it. Users other than the selected one are dimmed.
 Item {
     id: wrapper
 
@@ -49,6 +50,7 @@ Item {
         }
     }
 
+    // Round avatar.
     Item {
         id: imageSource
         width: faceSize
@@ -56,6 +58,7 @@ Item {
         anchors.horizontalCenter: parent.horizontalCenter
 
         // Image takes priority, taking a full path to a file, if that doesn't exist we show an icon
+        // Avatar picture; not drawn itself, the OpacityMask below draws it cut round.
         Image {
             id: face
             source: wrapper.avatarPath
@@ -65,12 +68,15 @@ Item {
             smooth: true
             visible: false
         }
+        // Circle for the OpacityMask. It is not hidden, so it is also drawn as the disc behind the avatar
+        // (the plain disc when the user has no picture).
         Image {
             id: mask
             source: "../assets/mask.svgz"
             sourceSize: Qt.size(faceSize, faceSize)
             smooth: true
         }
+        // The round avatar picture.
         OpacityMask {
             anchors.fill: face
             source: face
@@ -79,6 +85,7 @@ Item {
         }
     }
 
+    // User name under the avatar.
     Label {
         id: usernameLabel
 
@@ -96,6 +103,7 @@ Item {
         font.underline: wrapper.activeFocus
     }
 
+    // Clicking the user selects it.
     MouseArea {
         anchors.fill: parent
         hoverEnabled: true

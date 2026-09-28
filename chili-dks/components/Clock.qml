@@ -27,6 +27,7 @@
 
 import QtQuick
 
+// Time with the date under it, at the top left of the screen.
 Column {
     id: container
 
@@ -35,6 +36,7 @@ Column {
     property alias timeFont: time.font
     property alias dateFont: date.font
 
+    // Not drawn: keeps the time current.
     Timer {
         interval: 100
         running: true
@@ -42,6 +44,7 @@ Column {
         onTriggered: container.dateTime = new Date()
     }
 
+    // Time (hh:mm).
     Text {
         id: time
         anchors.horizontalCenter: parent.horizontalCenter
@@ -53,6 +56,7 @@ Column {
         font.pointSize: 72
     }
 
+    // Long date under the time.
     Text {
         id: date
         anchors.horizontalCenter: parent.horizontalCenter

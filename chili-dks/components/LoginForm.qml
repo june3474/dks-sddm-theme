@@ -22,6 +22,7 @@ import QtQuick
 import QtQuick.Layouts
 import QtQuick.Controls
 
+// The login block in the centre of the screen with its password row (layout in LoginFormLayout.qml).
 LoginFormLayout {
 
 	property string lastUserName
@@ -39,11 +40,13 @@ LoginFormLayout {
         loginRequest(username, password);
     }
 
+    // Password row under the user name. The left margin balances the login button so the field stays centred.
     RowLayout {
 
         Layout.leftMargin: loginButton.width + inputSpacing * 2
         Layout.minimumWidth: passwordField.width + loginButton.width + inputSpacing * 2
 
+        // Password field.
         TextField {
             id: passwordField
 
@@ -100,6 +103,7 @@ LoginFormLayout {
             }
         }
         
+        // Arrow button right of the password field; appears while the field has text.
         Image {
             id: loginButton
 

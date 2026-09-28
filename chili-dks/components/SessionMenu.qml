@@ -21,6 +21,7 @@ import QtQuick
 import QtQuick.Controls
 import QtQml
 
+// Session selector at the bottom left of the screen, showing the current session name.
 ToolButton {
     id: root
 
@@ -32,6 +33,7 @@ ToolButton {
 
     opacity: root.activeFocus ? 1 : 0.5
 
+    // Session name text.
     contentItem: Label {
         id: buttonLabel
         color: rootFontColor
@@ -50,6 +52,7 @@ ToolButton {
 
     onClicked: menu.open()
 
+    // Session list opening upwards from the button.
     Menu {
         id: menu
         // The session menu sits at the bottom of the screen, so it opens upwards.

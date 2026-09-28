@@ -21,6 +21,7 @@ import QtQuick
 import QtQuick.Controls
 import QtQml
 
+// Keyboard layout button at the top left, next to the clock; only visible with more than one layout.
 Button {
     id: keyboardLayoutButton
 
@@ -28,6 +29,7 @@ Button {
 
     visible: keyboard.layouts.length > 1
 
+    // Keyboard icon.
     contentItem: Image {
         id: buttonLabel
         source: "../assets/keyboard.svgz"
@@ -43,6 +45,7 @@ Button {
 
     onClicked: keyboardLayoutMenu.open()
 
+    // Layout list opening below the button.
     Menu {
         id: keyboardLayoutMenu
         y: keyboardLayoutButton.height

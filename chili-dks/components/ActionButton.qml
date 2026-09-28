@@ -21,6 +21,7 @@
 import QtQuick
 import QtQuick.Controls
 
+// One power button in the row at the bottom of the login block: icon with a label under it.
 Item {
     id: root
 
@@ -36,6 +37,7 @@ Item {
     implicitWidth: Math.max(icon.implicitWidth, label.contentWidth)
     implicitHeight: Math.max(icon.implicitHeight + label.height * 2, label.height)
 
+    // Icon.
     Image {
         id: icon
 
@@ -47,6 +49,7 @@ Item {
         height: config.PowerIconSize || iconSize
     }
 
+    // Label under the icon (Suspend, Reboot, Shutdown).
     Label {
         id: label
 
@@ -63,6 +66,7 @@ Item {
         color: "white"
         font.underline: root.activeFocus
     }
+    // Click area over icon and label; hovering brightens the button.
     MouseArea {
         id: mouseArea
         hoverEnabled: true
@@ -73,6 +77,7 @@ Item {
         anchors.fill: root
     }
 
+    // Not drawn: hover fade in and out.
     PropertyAnimation {
         id: fadeIn
         target: root

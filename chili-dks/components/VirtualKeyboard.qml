@@ -19,6 +19,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 import QtQuick
 import QtQuick.VirtualKeyboard
 
+// On-screen keyboard along the bottom edge; only shown while activated.
 InputPanel {
     id: inputPanel
     property bool activated: false

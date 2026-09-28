@@ -20,6 +20,7 @@
 
 import QtQuick
 
+// Horizontal row of users above the password field; the selected user sits in the centre.
 ListView {
     id: view
 
@@ -60,6 +61,7 @@ ListView {
     preferredHighlightBegin: width / 2 - userItemWidth / 2
     preferredHighlightEnd: preferredHighlightBegin
 
+    // One user: avatar with the name under it.
     delegate: UserDelegate {
         
         avatarPath: model.icon || ""

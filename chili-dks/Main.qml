@@ -25,6 +25,7 @@ import SddmComponents 2.0 as Sddm
 
 import "components"
 
+// SDDM opens one greeter window per screen and loads this file in each; root covers that whole screen.
 Rectangle {
     id: root
 
@@ -38,8 +39,10 @@ Rectangle {
     LayoutMirroring.enabled: Qt.locale().textDirection == Qt.RightToLeft
     LayoutMirroring.childrenInherit: true
 
+    // Not drawn: translated texts (Password, Reboot, Shutdown, Login failed).
     Sddm.TextConstants { id: textConstants }
 
+    // Background picture filling the screen.
     Repeater {
         model: screenModel
         Wallpaper {
@@ -51,6 +54,7 @@ Rectangle {
         }
     }
 
+    // Full-screen layer that holds the login block in the centre of the screen.
     StackView {
         id: loginFormStack
 
@@ -58,6 +62,7 @@ Rectangle {
         height: parent.height
         focus: true // StackView is an implicit focus scope. Therefore focus needs to be passed to its children.
 
+        // Centre block: avatar and user name, password field, notification text, power buttons.
         initialItem: LoginForm {
             id: userListComponent
 
@@ -82,7 +87,9 @@ Rectangle {
                 return text
             }
 
+            // Power buttons in a row at the bottom of the centre block.
             actionItems: [
+                // Left: Suspend.
                 ActionButton {
                     iconSource: Qt.resolvedUrl("assets/suspend.svgz")
                     text: config.translationSuspend ? config.translationSuspend : "Suspend"
@@ -90,6 +97,7 @@ Rectangle {
                     enabled: sddm.canSuspend
                     iconSize: root.generalFontSize * 3
                 },
+                // Middle: Reboot.
                 ActionButton {
                     iconSource: Qt.resolvedUrl("assets/reboot.svgz")
                     text: config.translationReboot ? config.translationReboot : textConstants.reboot
@@ -97,6 +105,7 @@ Rectangle {
                     enabled: sddm.canReboot
                     iconSize: root.generalFontSize * 3
                 },
+                // Right: Shutdown.
                 ActionButton {
                     iconSource: Qt.resolvedUrl("assets/shutdown.svgz")
                     text: config.translationPowerOff ? config.translationPowerOff : textConstants.shutdown
@@ -121,10 +130,12 @@ Rectangle {
 
     }
 
+    // Layer for the screen edges: clock at the top left, session menu at the bottom left.
     ColumnLayout {
         id: container
         anchors.fill: parent
 
+        // Top left: keyboard layout button and clock.
         RowLayout {
             id: header
 
@@ -136,6 +147,7 @@ Rectangle {
             Layout.rightMargin: generalFontSize * 1.5
             
             
+            // Keyboard layout button left of the clock; only shown when there is more than one layout.
             KeyboardLayoutButton {
 
                 //Layout.topMargin: -1
@@ -146,6 +158,7 @@ Rectangle {
             }
 
             
+            // Time and date at the top left.
             Clock {
                 id: clock
                 Layout.alignment: Qt.AlignLeft
@@ -167,11 +180,13 @@ Rectangle {
         }
 
 
+        // Empty space between header and footer; pushes the footer to the bottom edge.
         Item {
             Layout.fillHeight: true
         }
 
 
+        // Bottom left: session menu.
         RowLayout {
             id: footer
 
@@ -180,6 +195,7 @@ Rectangle {
             Layout.bottomMargin: generalFontSize
             Layout.leftMargin: generalFontSize * 1.5
 
+            // Current session name (e.g. "Kodi on GBM"); a click opens the session list. Hidden with a single session.
             SessionMenu {
                 id: sessionMenu
 
@@ -188,6 +204,7 @@ Rectangle {
             }
         }
 
+        // Not drawn: shows "Login failed" under the password field for 3 seconds.
         Connections {
             target: sddm
             function onLoginFailed() {
@@ -204,6 +221,7 @@ Rectangle {
 
     }
 
+    // On-screen keyboard sliding in from the bottom edge. Nothing opens it yet, so it stays hidden.
     Loader {
         id: inputPanel
         state: "hidden"

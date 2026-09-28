@@ -22,6 +22,7 @@ import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
 
+// The login block in the centre of the screen (LoginForm.qml fills in the password row).
 Item {
     id: root
 
@@ -40,6 +41,7 @@ Item {
 
     default property alias _children: innerLayout.children
 
+    // Top of the block: avatars and names of the users; the selected user is centred.
     UserList {
         id: userListView
         
@@ -51,6 +53,7 @@ Item {
         }
     }
 
+    // Below the users: password row, notification text and power buttons.
     ColumnLayout {
         id: prompts
 
@@ -59,16 +62,19 @@ Item {
         anchors.left: parent.left
         anchors.right: parent.right
 
+        // Password row and the notification text under it.
         ColumnLayout {
 
             Layout.alignment: Qt.AlignTop | Qt.AlignHCenter
 
+            // Holds the password row from LoginForm.qml.
             ColumnLayout {
                 id: innerLayout
 
                 Layout.topMargin: faceSize * 0.5
             }
 
+            // Italic message under the password field, e.g. "Login failed".
             Label {
                 id: notificationsLabel
 
@@ -87,6 +93,7 @@ Item {
 
         }
 
+        // Row of power buttons at the bottom of the block.
         RowLayout {
             id: actionItemsLayout
 

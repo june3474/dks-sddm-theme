@@ -20,12 +20,14 @@
 import QtQuick
 import Qt5Compat.GraphicalEffects
 
+// Background of one screen.
 FocusScope {
     id: backgroundComponent
 
     property alias imageSource: backgroundImage.source
     property bool configBlur: config.blur == "true"
 
+    // The picture, cropped to fill the screen.
     Image {
         id: backgroundImage
 
@@ -37,6 +39,7 @@ FocusScope {
         smooth: true
     }
 
+    // Blurred copy over the picture; no blur unless theme.conf sets blur=true.
     RecursiveBlur {
         id: backgroundBlur
 
@@ -46,6 +49,7 @@ FocusScope {
         loops: configBlur ? config.recursiveBlurLoops : 0
     }
 
+    // Clicking the background takes the focus off the controls.
     MouseArea {
         anchors.fill: parent
         onClicked: container.focus = true
