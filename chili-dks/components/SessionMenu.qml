@@ -35,7 +35,7 @@ ToolButton {
     contentItem: Label {
         id: buttonLabel
         color: rootFontColor
-        font.pointSize: rootFontSize
+        font.pointSize: Math.max(1, rootFontSize)
         renderType: Text.QtRendering
         text: instantiator.objectAt(currentIndex) ? instantiator.objectAt(currentIndex).text : ""
         font.underline: root.activeFocus

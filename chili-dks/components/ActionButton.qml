@@ -24,9 +24,6 @@ import QtQuick.Controls
 Item {
     id: root
 
-    anchors.top: parent.bottom
-    anchors.topMargin: icon.height
-
     property alias text: label.text
     property alias iconSource: icon.source
     property alias font: label.font
@@ -53,7 +50,7 @@ Item {
     Label {
         id: label
 
-        font.pointSize: iconSize / 3
+        font.pointSize: Math.max(1, iconSize / 3)
         renderType: Text.QtRendering
         anchors {
             top: icon.bottom

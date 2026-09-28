@@ -35,6 +35,9 @@ Rectangle {
     property string generalFontColor: "white"
     property int generalFontSize: config.FontPointSize ? config.FontPointSize : root.height / 80
 
+    LayoutMirroring.enabled: Qt.locale().textDirection == Qt.RightToLeft
+    LayoutMirroring.childrenInherit: true
+
     Sddm.TextConstants { id: textConstants }
 
     Repeater {
@@ -48,12 +51,79 @@ Rectangle {
         }
     }
 
+    StackView {
+        id: loginFormStack
+
+        width: parent.width
+        height: parent.height
+        focus: true // StackView is an implicit focus scope. Therefore focus needs to be passed to its children.
+
+        initialItem: LoginForm {
+            id: userListComponent
+
+            userListModel: userModel
+            userListCurrentIndex: userModel.lastIndex >= 0 ? userModel.lastIndex : 0
+            lastUserName: userModel.lastUser
+            usernameFontSize: root.generalFontSize
+            usernameFontColor: root.generalFontColor
+            faceSize: config.AvatarPixelSize ? config.AvatarPixelSize : root.width / 15
+
+            showUserList: {
+                if ( !userListModel.hasOwnProperty("count") || !userListModel.hasOwnProperty("disableAvatarsThreshold") )
+                    return (userList.y + loginFormStack.y) > 0
+                if ( userListModel.count == 0 )
+                    return false
+                return userListModel.count <= userListModel.disableAvatarsThreshold && (userList.y + loginFormStack.y) > 0
+            }
+
+            notificationMessage: {
+                var text = ""
+                text += root.notificationMessage
+                return text
+            }
+
+            actionItems: [
+                ActionButton {
+                    iconSource: Qt.resolvedUrl("assets/suspend.svgz")
+                    text: config.translationSuspend ? config.translationSuspend : "Suspend"
+                    onClicked: sddm.suspend()
+                    enabled: sddm.canSuspend
+                    iconSize: root.generalFontSize * 3
+                },
+                ActionButton {
+                    iconSource: Qt.resolvedUrl("assets/reboot.svgz")
+                    text: config.translationReboot ? config.translationReboot : textConstants.reboot
+                    onClicked: sddm.reboot()
+                    enabled: sddm.canReboot
+                    iconSize: root.generalFontSize * 3
+                },
+                ActionButton {
+                    iconSource: Qt.resolvedUrl("assets/shutdown.svgz")
+                    text: config.translationPowerOff ? config.translationPowerOff : textConstants.shutdown
+                    onClicked: sddm.powerOff()
+                    enabled: sddm.canPowerOff
+                    iconSize: root.generalFontSize * 3
+                }
+            ]
+
+            onLoginRequest: {
+                root.notificationMessage = ""
+                sddm.login(username, password, sessionMenu.currentIndex)
+            }
+        }
+
+
+        Behavior on opacity {
+            OpacityAnimator {
+                duration: 150
+            }
+        }
+
+    }
+
     ColumnLayout {
         id: container
         anchors.fill: parent
-
-        LayoutMirroring.enabled: Qt.locale().textDirection == Qt.RightToLeft
-        LayoutMirroring.childrenInherit: true
 
         RowLayout {
             id: header
@@ -97,184 +167,10 @@ Rectangle {
         }
 
 
-        StackView {
-            id: loginFormStack
-
+        Item {
             Layout.fillHeight: true
-            Layout.fillWidth: true
-            focus: true // StackView is an implicit focus scope. Therefore focus needs to be passed to its children.
-
-            initialItem: LoginForm {
-                id: userListComponent
-
-                userListModel: userModel
-                userListCurrentIndex: userModel.lastIndex >= 0 ? userModel.lastIndex : 0
-                lastUserName: userModel.lastUser
-                usernameFontSize: root.generalFontSize
-                usernameFontColor: root.generalFontColor
-                faceSize: config.AvatarPixelSize ? config.AvatarPixelSize : root.width / 15
-
-                showUserList: {
-                    if ( !userListModel.hasOwnProperty("count") || !userListModel.hasOwnProperty("disableAvatarsThreshold") )
-                        return (userList.y + loginFormStack.y) > 0
-                    if ( userListModel.count == 0 )
-                        return false
-                    return userListModel.count <= userListModel.disableAvatarsThreshold && (userList.y + loginFormStack.y) > 0
-                }
-
-                notificationMessage: {
-                    var text = ""
-                    text += root.notificationMessage
-                    return text
-                }
-
-                actionItems: [
-                    ActionButton {
-                        iconSource: Qt.resolvedUrl("assets/suspend.svgz")
-                        text: config.translationSuspend ? config.translationSuspend : "Suspend"
-                        onClicked: sddm.suspend()
-                        enabled: sddm.canSuspend
-                        iconSize: root.generalFontSize * 3
-                    },
-                    ActionButton {
-                        iconSource: Qt.resolvedUrl("assets/reboot.svgz")
-                        text: config.translationReboot ? config.translationReboot : textConstants.reboot
-                        onClicked: sddm.reboot()
-                        enabled: sddm.canReboot
-                        iconSize: root.generalFontSize * 3
-                    },
-                    ActionButton {
-                        iconSource: Qt.resolvedUrl("assets/shutdown.svgz")
-                        text: config.translationPowerOff ? config.translationPowerOff : textConstants.shutdown
-                        onClicked: sddm.powerOff()
-                        enabled: sddm.canPowerOff
-                        iconSize: root.generalFontSize * 3
-                    }
-                ]
-
-                onLoginRequest: {
-                    root.notificationMessage = ""
-                    sddm.login(username, password, sessionMenu.currentIndex)
-                }
-            }
-
-
-            Behavior on opacity {
-                OpacityAnimator {
-                    duration: 150
-                }
-            }
-
         }
 
-        Loader {
-            id: inputPanel
-            state: "hidden"
-            property bool keyboardActive: item ? item.active : false
-            onKeyboardActiveChanged: {
-                if (keyboardActive) {
-                    state = "visible"
-                } else {
-                    state = "hidden";
-                }
-            }
-            source: "components/VirtualKeyboard.qml"
-            Layout.fillWidth: true
-
-            function showHide() {
-                state = state == "hidden" ? "visible" : "hidden";
-            }
-
-            states: [
-                State {
-                    name: "visible"
-                    PropertyChanges {
-                        target: loginFormStack
-                        y: Math.min(0, root.height - inputPanel.height - userListComponent.visibleBoundary)
-                    }
-                    PropertyChanges {
-                        target: inputPanel
-                        y: root.height - inputPanel.height
-                        opacity: 1
-                    }
-                },
-                State {
-                    name: "hidden"
-                    PropertyChanges {
-                        target: loginFormStack
-                        y: 0
-                    }
-                    PropertyChanges {
-                        target: inputPanel
-                        y: root.height - root.height/4
-                        opacity: 0
-                    }
-                }
-            ]
-            transitions: [
-                Transition {
-                    from: "hidden"
-                    to: "visible"
-                    SequentialAnimation {
-                        ScriptAction {
-                            script: {
-                                inputPanel.item.activated = true;
-                                Qt.inputMethod.show();
-                            }
-                        }
-                        ParallelAnimation {
-                            NumberAnimation {
-                                target: loginFormStack
-                                property: "y"
-                                duration: units.longDuration
-                                easing.type: Easing.InOutQuad
-                            }
-                            NumberAnimation {
-                                target: inputPanel
-                                property: "y"
-                                duration: units.longDuration
-                                easing.type: Easing.OutQuad
-                            }
-                            OpacityAnimator {
-                                target: inputPanel
-                                duration: units.longDuration
-                                easing.type: Easing.OutQuad
-                            }
-                        }
-                    }
-                },
-                Transition {
-                    from: "visible"
-                    to: "hidden"
-                    SequentialAnimation {
-                        ParallelAnimation {
-                            NumberAnimation {
-                                target: loginFormStack
-                                property: "y"
-                                duration: units.longDuration
-                                easing.type: Easing.InOutQuad
-                            }
-                            NumberAnimation {
-                                target: inputPanel
-                                property: "y"
-                                duration: units.longDuration
-                                easing.type: Easing.InQuad
-                            }
-                            OpacityAnimator {
-                                target: inputPanel
-                                duration: units.longDuration
-                                easing.type: Easing.InQuad
-                            }
-                        }
-                        ScriptAction {
-                            script: {
-                                Qt.inputMethod.hide();
-                            }
-                        }
-                    }
-                }
-            ]
-        }
 
         RowLayout {
             id: footer
@@ -306,5 +202,114 @@ Rectangle {
             onTriggered: notificationMessage = ""
         }
 
+    }
+
+    Loader {
+        id: inputPanel
+        state: "hidden"
+        property bool keyboardActive: item ? item.active : false
+        onKeyboardActiveChanged: {
+            if (keyboardActive) {
+                state = "visible"
+            } else {
+                state = "hidden";
+            }
+        }
+        source: "components/VirtualKeyboard.qml"
+        width: parent.width
+
+        function showHide() {
+            state = state == "hidden" ? "visible" : "hidden";
+        }
+
+        states: [
+            State {
+                name: "visible"
+                PropertyChanges {
+                    target: loginFormStack
+                    y: Math.min(0, root.height - inputPanel.height - userListComponent.visibleBoundary)
+                }
+                PropertyChanges {
+                    target: inputPanel
+                    y: root.height - inputPanel.height
+                    opacity: 1
+                }
+            },
+            State {
+                name: "hidden"
+                PropertyChanges {
+                    target: loginFormStack
+                    y: 0
+                }
+                PropertyChanges {
+                    target: inputPanel
+                    y: root.height - root.height/4
+                    opacity: 0
+                }
+            }
+        ]
+        transitions: [
+            Transition {
+                from: "hidden"
+                to: "visible"
+                SequentialAnimation {
+                    ScriptAction {
+                        script: {
+                            inputPanel.item.activated = true;
+                            Qt.inputMethod.show();
+                        }
+                    }
+                    ParallelAnimation {
+                        NumberAnimation {
+                            target: loginFormStack
+                            property: "y"
+                            duration: units.longDuration
+                            easing.type: Easing.InOutQuad
+                        }
+                        NumberAnimation {
+                            target: inputPanel
+                            property: "y"
+                            duration: units.longDuration
+                            easing.type: Easing.OutQuad
+                        }
+                        OpacityAnimator {
+                            target: inputPanel
+                            duration: units.longDuration
+                            easing.type: Easing.OutQuad
+                        }
+                    }
+                }
+            },
+            Transition {
+                from: "visible"
+                to: "hidden"
+                SequentialAnimation {
+                    ParallelAnimation {
+                        NumberAnimation {
+                            target: loginFormStack
+                            property: "y"
+                            duration: units.longDuration
+                            easing.type: Easing.InOutQuad
+                        }
+                        NumberAnimation {
+                            target: inputPanel
+                            property: "y"
+                            duration: units.longDuration
+                            easing.type: Easing.InQuad
+                        }
+                        OpacityAnimator {
+                            target: inputPanel
+                            duration: units.longDuration
+                            easing.type: Easing.InQuad
+                        }
+                    }
+                    ScriptAction {
+                        script: {
+                            Qt.inputMethod.hide();
+                        }
+                    }
+                }
+            }
+        ]
     }
 }

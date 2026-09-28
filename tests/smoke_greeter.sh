@@ -33,9 +33,7 @@ require() {
 
 # Tolerated output:
 #  - qtvirtualkeyboard is optional; its Loader failing is not a theme error.
-#  - The theme anchors items that live inside layouts (ActionButton, the keyboard Loader). Qt warns about it, but
-#    that design predates the Qt 6 port.
-tolerated='module "QtQuick.VirtualKeyboard"|Detected anchors on an item that is managed by a layout'
+tolerated='module "QtQuick.VirtualKeyboard"'
 forbid() {
     if grep -vE -- "$tolerated" "$log" | grep -nE -- "$1"; then
         echo "FAIL: found /$1/ in greeter output"
@@ -48,6 +46,8 @@ require 'Adding view for'
 forbid 'Fallback to embedded theme'
 forbid 'is not installed|is not a type|TypeError|ReferenceError|Unable to assign|Cannot (read|assign|call)'
 forbid '\.qml:[0-9]+'
+# A font size bound to a not yet evaluated size property (still 0) during start-up.
+forbid 'Point size <= 0'
 
 if [ "$fail" -ne 0 ]; then
     echo "--- greeter output ---"

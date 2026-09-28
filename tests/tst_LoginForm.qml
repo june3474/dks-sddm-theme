@@ -36,6 +36,7 @@ TestCase {
                 usernameFontSize: 12
                 usernameFontColor: "white"
                 faceSize: 60
+                actionItems: [ Item { implicitWidth: 40; implicitHeight: 40 } ]
             }
         }
     }
@@ -112,6 +113,18 @@ TestCase {
         keyClick(Qt.Key_Left)
         compare(list.currentIndex, 0)
         tryVerify(function() { return centreOffset(list) === 0 }, 2000, "user after Left centred")
+    }
+
+    // The user list, the password prompt and the action items form one block centred in the StackView.
+    function test_form_block_is_vertically_centred() {
+        var stack = makeStack()
+        var form = stack.currentItem
+        var action = form.actionItems[0]
+        tryVerify(function() {
+            var top = form.userList.mapToItem(stack, 0, 0).y
+            var bottom = action.mapToItem(stack, 0, action.height).y
+            return Math.abs((top + bottom) / 2 - stack.height / 2) <= 1
+        }, 2000, "block centred")
     }
 
     function test_escape_takes_focus_off_the_password_field() {

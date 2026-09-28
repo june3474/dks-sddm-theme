@@ -53,7 +53,7 @@ LoginFormLayout {
             onAccepted: startLogin()
         	focus: true
 
-            font.pointSize: usernameFontSize * 0.9
+            font.pointSize: Math.max(1, usernameFontSize * 0.9)
             implicitWidth: root.width / 5
             implicitHeight: usernameFontSize * 2.75
             opacity: 0.5

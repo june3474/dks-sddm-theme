@@ -45,7 +45,7 @@ Item {
         
         visible: showUserList && y > 0
         anchors {
-            bottom: parent.verticalCenter
+            bottom: prompts.top
             left: parent.left
             right: parent.right
         }
@@ -54,10 +54,10 @@ Item {
     ColumnLayout {
         id: prompts
 
-        anchors.top: parent.verticalCenter
+        // Centers the user list and the prompts below it as one block.
+        y: (parent.height + userListView.height - implicitHeight) / 2
         anchors.left: parent.left
         anchors.right: parent.right
-        anchors.bottom: parent.bottom
 
         ColumnLayout {
 
@@ -91,7 +91,7 @@ Item {
             id: actionItemsLayout
 
             Layout.alignment: Qt.AlignHCenter
-            Layout.bottomMargin: actionItemsLayout.implicitHeight * 4
+            Layout.topMargin: faceSize
 
             spacing: usernameFontSize * 2
         }

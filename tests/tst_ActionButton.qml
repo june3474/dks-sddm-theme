@@ -15,7 +15,7 @@ TestCase {
 
     Component {
         id: buttonRow
-        // ActionButton anchors itself to its parent's bottom, so it is used inside a layout like in the theme.
+        // Used inside a layout like in the theme.
         RowLayout {
             property alias button: button
             ActionButton {
